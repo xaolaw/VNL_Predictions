@@ -51,7 +51,11 @@ logistic <- glm(Winner ~ . - Match_Date - Nationality -Player.Name -TeamA - Team
 summary(logistic)
 ```
 ```{r}
-logisticPL <- glm(Winner ~ . - Match_Date -Player.Name -TeamA - TeamB, family = binomial, data = PolandSet)
+set.seed(123) 
+train_indices <- sample(nrow(dataset), 0.8 * nrow(dataset))  # 80% for training
+train_PL <- PolandSet[train_indices, ]
+test_PL <- PolandSet[-train_indices, ]
+logisticPL <- glm(Winner ~ . - Match_Date -Player.Name -TeamA - TeamB, family = binomial, data = train_PL)
 summary(logisticPL)
 ```
 ```{r}
@@ -63,4 +67,25 @@ final <- PolandSet[PolandSet$Match_Date == "2023-07-23", c("Player.Name", "Posit
                                       "Reception_Successful", "Reception_Errors", "Reception_Attemps", 
                                       "Dig_Success", "Dig_Errors", "Dig_Attempts")]
 final
+```
+```{r}
+predictions <- predict(logisticPL, newdata = test_PL, type = "response")
+predicted_classes <- ifelse(predictions > 0.5, 1, 0)
+cm <- table(Actual = test_PL$Winner, Predicted = predicted_classes)
+print(cm)
+```
+```{r}
+accuracy <- sum(diag(cm)) / sum(cm)
+cat("Accuracy:", accuracy, "\n")
+
+sensitivity <- cm[2, 2] / sum(cm[2, ])
+cat("Sensitivity (TPR):", sensitivity, "\n")
+
+specificity <- cm[1, 1] / sum(cm[1, ])
+cat("Specificity (TNR):", specificity, "\n")
+```
+```{r}
+library(pROC)
+roc_curve <- roc(test_PL$Winner, predictions)
+plot(roc_curve, main = "ROC Curve")
 ```
