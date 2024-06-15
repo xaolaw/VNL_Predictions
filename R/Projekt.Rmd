@@ -1,3 +1,53 @@
+# Analiza zbioru statystyk siatkarzy z VNL 2021-2023 i próba predykcji czy siatkarz z danymi statystykami wygra mecz
+
+## Prezentacja statystyk jakie posiada jeden zawodnik
+
 ```{r}
-?hitters
+setwd("../")
+data <- read.csv("vnl_dataset.csv")
+data$Winner <- data$Winner == "True"
+data$Position <- factor(data$Position)
+data$Nationality <- factor(data$Nationality)
+data <- data[, -which(names(data) == "TeamA")]
+data <- data[, -which(names(data) == "TeamB")]
+
+
+filtered_data <- data[data$Player.Name == "Sliwka Aleksander", ]
+print(filtered_data)
+data <- data[, -which(names(data) == "Player.Name")]
 ```
+
+## Przeprowadzenie regresji liniowej
+
+### Usunięcie niepoprawnych danych
+
+```{r}
+na_counts <- apply(data, 2, function(x) sum(is.na(x)))
+nan_counts <- apply(data, 2, function(x) sum(is.nan(x)))
+inf_counts <- apply(data, 2, function(x) sum(is.infinite(x)))
+
+dataset <- data[complete.cases(data) & !apply(data, 1, function(x) any(is.nan(x) | is.infinite(x))), ]
+
+na_counts <- apply(dataset, 2, function(x) sum(is.na(x)))
+nan_counts <- apply(dataset, 2, function(x) sum(is.nan(x)))
+inf_counts <- apply(dataset, 2, function(x) sum(is.infinite(x)))
+
+print("NA counts per column:")
+print(na_counts)
+print("NaN counts per column:")
+print(nan_counts)
+print("Inf counts per column:")
+print(inf_counts)
+```
+
+### stworzenie modelu regresji liniowej
+
+```{r}
+model <- lm(Winner~.,data=dataset)
+summary(model)
+```
+
+### coś
+```{r}
+```
+
