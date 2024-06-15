@@ -8,13 +8,10 @@ data <- read.csv("vnl_dataset.csv")
 data$Winner <- data$Winner == "True"
 data$Position <- factor(data$Position)
 data$Nationality <- factor(data$Nationality)
-data <- data[, -which(names(data) == "TeamA")]
-data <- data[, -which(names(data) == "TeamB")]
 
 
 filtered_data <- data[data$Player.Name == "Sliwka Aleksander", ]
 print(filtered_data)
-data <- data[, -which(names(data) == "Player.Name")]
 ```
 
 ## Przeprowadzenie regresji liniowej
@@ -32,18 +29,12 @@ na_counts <- apply(dataset, 2, function(x) sum(is.na(x)))
 nan_counts <- apply(dataset, 2, function(x) sum(is.nan(x)))
 inf_counts <- apply(dataset, 2, function(x) sum(is.infinite(x)))
 
-print("NA counts per column:")
-print(na_counts)
-print("NaN counts per column:")
-print(nan_counts)
-print("Inf counts per column:")
-print(inf_counts)
 ```
 
 ### stworzenie modelu regresji liniowej
 
 ```{r}
-model <- lm(Winner~ . -Match_Date,data=dataset)
+model <- lm(Winner~ . -Match_Date -Player.Name -TeamA - TeamB,data=dataset)
 summary(model)
 ```
 
@@ -51,8 +42,25 @@ summary(model)
 ```{r}
 PolandSet <- dataset[dataset$Nationality == "Poland", ]
 PolandSet <- PolandSet[, sapply(PolandSet, function(x) length(unique(x)) > 1)]
-modelPL <- lm(Winner ~ . - Match_Date, data = PolandSet)
+modelPL <- lm(Winner ~ . - Match_Date -Player.Name -TeamA - TeamB, data = PolandSet)
 summary(modelPL)
 
 ```
-
+```{r}
+logistic <- glm(Winner ~ . - Match_Date - Nationality -Player.Name -TeamA - TeamB, family = binomial, data = dataset)
+summary(logistic)
+```
+```{r}
+logisticPL <- glm(Winner ~ . - Match_Date -Player.Name -TeamA - TeamB, family = binomial, data = PolandSet)
+summary(logisticPL)
+```
+```{r}
+PolandSet$probs <- predict(logisticPL, type = "response")
+final <- PolandSet[PolandSet$Match_Date == "2023-07-23", c("Player.Name", "Position", "Year", "TeamA", "TeamB", "Match_Date", "Winner", "probs","Serve_Points","Serve_Errors", "Serve_Attempts", 
+                                      "Set_Successes", "Set_Errors", "Set_Attempts", 
+                                      "Attack_Success", "Attack.Errors", "Attack_Attempts", 
+                                      "Block_Successful", "Block_Errors", "Block_Rebounds", 
+                                      "Reception_Successful", "Reception_Errors", "Reception_Attemps", 
+                                      "Dig_Success", "Dig_Errors", "Dig_Attempts")]
+final
+```
