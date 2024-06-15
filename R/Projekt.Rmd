@@ -43,11 +43,16 @@ print(inf_counts)
 ### stworzenie modelu regresji liniowej
 
 ```{r}
-model <- lm(Winner~.,data=dataset)
+model <- lm(Winner~ . -Match_Date,data=dataset)
 summary(model)
 ```
 
 ### coś
 ```{r}
+PolandSet <- dataset[dataset$Nationality == "Poland", ]
+PolandSet <- PolandSet[, sapply(PolandSet, function(x) length(unique(x)) > 1)]
+modelPL <- lm(Winner ~ . - Match_Date, data = PolandSet)
+summary(modelPL)
+
 ```
 
