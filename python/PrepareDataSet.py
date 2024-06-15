@@ -8,11 +8,11 @@ def determine_winner(row):
         return row['Team B']
 
 
-results_21 = pd.read_csv("python/vnl_2021_results.csv")
+results_21 = pd.read_csv("vnl_2021_results.csv")
 results_21["year"] = 2021
-results_22 = pd.read_csv("python/vnl_2022_results.csv")
+results_22 = pd.read_csv("vnl_2022_results.csv")
 results_22["year"] = 2022
-results_23 = pd.read_csv("python/vnl_2023_results.csv")
+results_23 = pd.read_csv("vnl_2023_results.csv")
 results_23["year"] = 2023
 
 results = [results_21, results_22,results_23]
@@ -25,18 +25,18 @@ for result in results:
 
 
 data = pd.concat([results_21, results_22, results_23])
-data = data.rename(columns={'Team A': 'TeamA','Team B': 'TeamB','full_date':'Match_Date'})
+data = data.rename(columns={'Team A': 'TeamA','Team B': 'TeamB','full_date':'Match_Date',})
 data = data.replace({'TeamA': {'United States': 'USA'}, 'TeamB': {'United States': 'USA'}})
 
-player_data = pd.read_csv('python/df_mens_indv_21_23.csv')
+player_data = pd.read_csv('df_mens_indv_21_23.csv')
 player_data['Match_Date'] = pd.to_datetime(player_data['Match_Date'],format='%d/%m/%Y', errors='coerce')
 merged_data = pd.merge(data, player_data, on=['TeamA', 'TeamB', 'Match_Date'], how='inner')
 
-player_info_data = pd.read_csv('python/df_mens_rosters_21_23.csv')
-player_info_data = player_info_data[['Player_ID', 'Player Name', 'Position', 'Nationality']]
-merged_data = pd.merge(player_info_data,merged_data,on='Player_ID', how='inner')
+player_info_data = pd.read_csv('df_mens_rosters_21_23.csv')
+player_info_data = player_info_data[['Player_ID', 'Player Name', 'Position', 'Nationality', 'Age','Height','Year']]
+merged_data = pd.merge(player_info_data,merged_data,on=['Player_ID','Year'], how='inner')
 
 merged_data['Winner'] = merged_data['Nationality'] == merged_data['Winner']
 
-merged_data.to_csv('vnl_dataset.csv', index=False)
+merged_data.to_csv('../vnl_dataset.csv', index=False)
 
