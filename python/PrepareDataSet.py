@@ -26,6 +26,7 @@ for result in results:
 
 data = pd.concat([results_21, results_22, results_23])
 data = data.rename(columns={'Team A': 'TeamA','Team B': 'TeamB','full_date':'Match_Date'})
+data = data.replace({'TeamA': {'United States': 'USA'}, 'TeamB': {'United States': 'USA'}})
 
 player_data = pd.read_csv('python/df_mens_indv_21_23.csv')
 player_data['Match_Date'] = pd.to_datetime(player_data['Match_Date'],format='%d/%m/%Y', errors='coerce')
@@ -37,6 +38,5 @@ merged_data = pd.merge(player_info_data,merged_data,on='Player_ID', how='inner')
 
 merged_data['Winner'] = merged_data['Nationality'] == merged_data['Winner']
 
-
-merged_data.to_csv('../vnl_dataset.csv', index=False)
+merged_data.to_csv('vnl_dataset.csv', index=False)
 
