@@ -1,0 +1,125 @@
+date,hour,Team A,result,Team B
+28 May,10:00,France,3–0,Bulgaria
+28 May,12:00,Germany,3–0,Australia
+28 May,13:00,Japan,3–0,Iran
+28 May,15:00,Serbia,3–1,Slovenia
+28 May,16:00,Netherlands,1–3,Russia
+28 May,18:00,United States,3–0,Canada
+28 May,19:30,Poland,3–0,Italy
+28 May,21:00,Brazil,3–0,Argentina
+29 May,10:00,Germany,2–3,France
+29 May,12:00,Iran,1–3,Russia
+29 May,13:00,Netherlands,2–3,Japan
+29 May,15:00,Australia,0–3,Bulgaria
+29 May,16:00,Poland,3–1,Serbia
+29 May,18:00,Italy,0–3,Slovenia
+29 May,19:30,Argentina,0–3,Canada
+29 May,21:00,United States,0–3,Brazil
+30 May,10:00,Australia,1–3,France
+30 May,12:00,Netherlands,0–3,Iran
+30 May,13:00,Germany,3–2,Bulgaria
+30 May,15:00,Russia,2–3,Japan
+30 May,16:20,United States,3–1,Argentina
+30 May,18:25,Canada,1–3,Brazil
+30 May,19:30,Poland,1–3,Slovenia
+30 May,21:00,Serbia,3–1,Italy
+3 Jun,10:00,Germany,2–3,Argentina
+3 Jun,12:00,Iran,3–1,Canada
+3 Jun,13:00,Japan,1–3,Serbia
+3 Jun,15:00,Brazil,0–3,France
+3 Jun,16:00,Netherlands,0–3,Slovenia
+3 Jun,18:00,Australia,0–3,Poland
+3 Jun,19:30,Italy,3–2,Bulgaria
+3 Jun,21:00,Russia,3–1,United States
+4 Jun,10:00,Argentina,0–3,Slovenia
+4 Jun,12:00,Netherlands,3–2,Germany
+4 Jun,13:00,Brazil,3–0,Japan
+4 Jun,15:00,Serbia,3–2,France
+4 Jun,16:00,Iran,3–1,Italy
+4 Jun,18:15,Poland,3–0,United States
+4 Jun,19:30,Russia,3–0,Australia
+4 Jun,21:00,Canada,3–0,Bulgaria
+5 Jun,10:00,Netherlands,0–3,Argentina
+5 Jun,12:00,Slovenia,1–3,Germany
+5 Jun,13:00,France,3–2,Japan
+5 Jun,15:00,Brazil,3–1,Serbia
+5 Jun,16:00,Russia,1–3,Poland
+5 Jun,18:00,United States,3–0,Australia
+5 Jun,19:30,Bulgaria,0–3,Iran
+5 Jun,21:00,Canada,2–3,Italy
+9 Jun,10:00,Serbia,3–1,Germany
+9 Jun,12:00,Japan,3–1,Australia
+9 Jun,13:00,France,3–1,Russia
+9 Jun,15:00,Slovenia,3–0,Canada
+9 Jun,16:30,Argentina,0–3,Italy
+9 Jun,18:00,Iran,3–0,United States
+9 Jun,19:30,Poland,3–0,Bulgaria
+9 Jun,21:00,Netherlands,0–3,Brazil
+10 Jun,10:00,Serbia,3–2,Iran
+10 Jun,12:00,Russia,3–1,Canada
+10 Jun,13:00,France,2–3,Slovenia
+10 Jun,15:00,Argentina,3–0,Australia
+10 Jun,16:00,Germany,0–3,United States
+10 Jun,18:00,Bulgaria,0–3,Brazil
+10 Jun,19:30,Japan,3–2,Italy
+10 Jun,21:00,Poland,3–0,Netherlands
+11 Jun,10:00,Iran,2–3,Germany
+11 Jun,12:00,Slovenia,3–2,Russia
+11 Jun,13:00,Japan,1–3,Argentina
+11 Jun,15:00,Netherlands,2–3,Bulgaria
+11 Jun,16:30,Australia,0–3,Italy
+11 Jun,18:00,United States,1–3,Serbia
+11 Jun,19:30,Canada,1–3,France
+11 Jun,21:00,Poland,0–3,Brazil
+15 Jun,10:00,Russia,3–1,Serbia
+15 Jun,12:00,Iran,2–3,Australia
+15 Jun,13:00,Argentina,3–1,Bulgaria
+15 Jun,15:00,Japan,3–0,Germany
+15 Jun,16:30,Italy,0–3,United States
+15 Jun,18:00,Canada,0–3,Poland
+15 Jun,19:30,Brazil,3–2,Slovenia
+15 Jun,21:00,Netherlands,3–2,France
+16 Jun,10:00,Argentina,1–3,Russia
+16 Jun,12:00,Serbia,3–0,Bulgaria
+16 Jun,13:00,Slovenia,3–1,Australia
+16 Jun,15:00,Japan,0–3,Poland
+16 Jun,16:30,Netherlands,1–3,Italy
+16 Jun,18:00,Canada,3–0,Germany
+16 Jun,19:30,United States,1–3,France
+16 Jun,21:00,Iran,1–3,Brazil
+17 Jun,10:00,Argentina,3–0,Serbia
+17 Jun,12:00,Bulgaria,0–3,Russia
+17 Jun,13:00,Japan,0–3,Canada
+17 Jun,15:00,Australia,0–3,Brazil
+17 Jun,16:00,Iran,1–3,Slovenia
+17 Jun,18:00,Netherlands,2–3,United States
+17 Jun,19:30,France,2–3,Italy
+17 Jun,21:00,Germany,0–3,Poland
+21 Jun,10:00,Australia,1–3,Serbia
+21 Jun,12:00,Japan,3–0,Bulgaria
+21 Jun,13:00,France,3–0,Iran
+21 Jun,15:00,Canada,3–0,Netherlands
+21 Jun,16:30,Brazil,3–1,Italy
+21 Jun,18:00,Slovenia,3–2,United States
+21 Jun,19:30,Poland,3–0,Argentina
+21 Jun,21:00,Germany,1–3,Russia
+22 Jun,10:00,Canada,3–0,Australia
+22 Jun,12:00,Serbia,3–2,Netherlands
+22 Jun,13:00,Bulgaria,0–3,United States
+22 Jun,15:00,Iran,0–3,Poland
+22 Jun,16:00,Japan,0–3,Slovenia
+22 Jun,18:00,France,3–0,Argentina
+22 Jun,19:30,Brazil,3–0,Germany
+22 Jun,21:00,Russia,3–2,Italy
+23 Jun,10:00,Australia,0–3,Netherlands
+23 Jun,12:00,Canada,3–2,Serbia
+23 Jun,13:00,United States,3–0,Japan
+23 Jun,15:00,France,3–2,Poland
+23 Jun,16:00,Iran,1–3,Argentina
+23 Jun,18:00,Slovenia,3–0,Bulgaria
+23 Jun,19:30,Italy,3–2,Germany
+23 Jun,21:00,Brazil,0–3,Russia
+26 Jun,11:30,Brazil,3–0,France
+26 Jun,15:00,Poland,3–0,Slovenia
+27 Jun,11:30,France,3–0,Slovenia
+27 Jun,15:00,Brazil,3–1,Poland
