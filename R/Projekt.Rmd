@@ -182,6 +182,7 @@ rf <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = datas
 pred_rf <- predict(rf, newdata = dataset[test_rf, ])
 
 mse_rfPL <- mean((pred_rf - dataset$Winner[test_rf])^2)
+print(rf)
 print(mse_rfPL)
 ```
 
@@ -196,6 +197,7 @@ rfPL <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = Pol
 pred_rfPL <- predict(rfPL, newdata = PolandSet[testPL_rf, ])
   
 mse_rfPL <- mean((pred_rfPL - PolandSet$Winner[testPL_rf])^2)
+print(rfPL)
 print(mse_rfPL)
 ```
 
@@ -213,6 +215,8 @@ print(paste("Accuracy:", round(accuracy, 4)))
 
 ```{r}
 importance(rf)
+plot(rf, type = "l")
+varImpPlot(rf)
 ```
 
 #### Wyniki dla zbioru Polskich siatkarzy
@@ -230,6 +234,8 @@ print(paste("Accuracy:", round(accuracyPL, 4)))
 
 ```{r}
 importance(rfPL)
+plot(rfPL, type = "l")
+varImpPlot(rfPL)
 ```
 
 ## Badanie pozycji
@@ -263,4 +269,9 @@ print(conf_matrix_pos)
 
 accuracy_pos <- sum(diag(conf_matrix_pos)) / sum(conf_matrix_pos)
 print(paste("Accuracy:", round(accuracy_pos, 4)))
+```
+```{r}
+importance(rf_pos)
+plot(rf_pos, type = "l")
+varImpPlot(rf_pos)
 ```
