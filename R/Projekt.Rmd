@@ -252,16 +252,13 @@ pos_boost <- gbm(Position ~ . - Match_Date -Player_ID -Versus -Nationality -Winn
 pos_boost
 ```
 ```{r}
-pos_pred_boost <- predict(pos_boost, newdata = test, n.trees = 5000)
-breaks <- c(-Inf, 1, 2, 3, 4, Inf) 
-labels <- c("L", "MB", "O", "OH", "S")
-pred_class <- cut(pos_pred_boost, breaks = breaks, labels = labels)
-conf_matrix_pos_gbm <- table(Predicted = pred_class, Actual = test$Position)
-
-print(conf_matrix_pos_gbm)
-
-accuracy_pos <- sum(diag(conf_matrix_pos_gbm)) / sum(conf_matrix_pos_gbm)
-print(paste("Accuracy:", round(accuracy_pos, 4)))
+pos_pred_boost <- predict(pos_boost, newdata = test, n.trees = 5000,type = "response")
+class_names = colnames(pos_pred_boost)[apply(pos_pred_boost, 1, which.max)]
+result = data.frame(test$Position, class_names)
+ 
+print(result)
+conf_mat = confusionMatrix(test$Position, as.factor(class_names))
+print(conf_mat)
 ```
 ```{r}
 summary(pos_boost)
