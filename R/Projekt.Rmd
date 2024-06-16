@@ -209,7 +209,6 @@ print(paste("Accuracy:", round(accuracyPL, 4)))
 importance(rfPL)
 ```
 
-## Badanie Nationality
 ## Badanie pozycji
 ```{r}
 library(class)
@@ -217,8 +216,56 @@ library(class)
 
 
 ```{r}
+train_knn <- train[, !(names(train) %in% c("Versus","Match_Date","Nationality","Winner","Position"))]
+test_knn <- test[, !(names(test) %in% c("Versus","Match_Date","Nationality","Winner","Position"))]
 class_knn <- dataset$Position[train_indices]
-knn_pos <- knn(train = train, test = test, cl = class_knn, k=1)
+knn_pos <- knn(train = train_knn, test = test_knn, cl = class_knn, k=3)
 
-table(train$Position[train_indices], knn_pos)
+class_knn_test <- dataset$Position[-train_indices]
+t <- table(knn_pos,class_knn_test)
+
+accuracy <- sum(diag(t)) / sum(t)
+print(t)
+print(paste("Accuracy:", accuracy))
+```
+```{r}
+set.seed(123)
+rf_pos <- randomForest(Position ~ . - Match_Date -Player.Name -Player_ID -Versus -Nationality -Winner, data = dataset, subset = train_rf, importance = TRUE)
+
+pred_rf_pos <- predict(rf_pos, newdata = dataset[test_rf, ])
+conf_matrix_pos <- table(Predicted = pred_rf_pos, Actual = dataset$Position[test_rf])
+
+print(conf_matrix_pos)
+
+accuracy_pos <- sum(diag(conf_matrix_pos)) / sum(conf_matrix_pos)
+print(paste("Accuracy:", round(accuracy_pos, 4)))
+```
+```{r}
+#install.packages("xgboost")
+install.packages("gbm")
+library(xgboost)
+library(gbm)
+```
+```{r}
+pos_boost <- gbm(Position ~ . - Match_Date -Player_ID -Versus -Nationality -Winner, data = train, distribution = "gaussian",
+                  n.trees = 5000, interaction.depth = 4)
+pos_boost
+```
+```{r}
+pos_pred_boost <- predict(pos_boost, newdata = test, n.trees = 5000)
+breaks <- c(-Inf, 1, 2, 3, 4, Inf) 
+labels <- c("L", "MB", "O", "OH", "S")
+pred_class <- cut(pos_pred_boost, breaks = breaks, labels = labels)
+conf_matrix_pos_gbm <- table(Predicted = pred_class, Actual = test$Position)
+
+print(conf_matrix_pos_gbm)
+
+accuracy_pos <- sum(diag(conf_matrix_pos_gbm)) / sum(conf_matrix_pos_gbm)
+print(paste("Accuracy:", round(accuracy_pos, 4)))
+```
+```{r}
+summary(pos_boost)
+```
+```{r}
+plot(pos_boost, i.var = "Age")
 ```
