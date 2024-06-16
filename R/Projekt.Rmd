@@ -7,6 +7,7 @@ setwd("../")
 data <- read.csv("vnl_dataset.csv")
 data$Winner <- data$Winner == "True"
 data$Nationality <- factor(data$Nationality)
+data$Player.Name <- factor(data$Player.Name)
 data$Versus <- factor(data$Versus)
 data <- data[, -which(names(data) == "Total_Attacks")]
 data <- data[, -which(names(data) == "Total_Blocks")]
@@ -86,7 +87,9 @@ set.seed(0)
 train_indices <- sample(nrow(dataset), 0.8 * nrow(dataset))  # 80% for training
 train <- dataset[train_indices, ]
 test <- dataset[-train_indices, ]
-logistic <- glm(Winner ~ . - Match_Date - Nationality -Player.Name -Position -Reception_Successful -Dig_Attempts -Set_Successes -Year -Player_ID -Reception_Attemps -Block_Rebounds, family = binomial, data = train)
+train <- train[, !(names(train) %in% c("Player.Name"))]
+test <- test[, !(names(test) %in% c("Player.Name"))]
+logistic <- glm(Winner ~ . - Match_Date - Nationality -Position -Reception_Successful -Dig_Attempts -Set_Successes -Year -Player_ID -Reception_Attemps -Block_Rebounds, family = binomial, data = train)
 summary(logistic)
 ```
 
