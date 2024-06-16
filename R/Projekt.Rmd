@@ -2,6 +2,8 @@
 
 ## Prezentacja statystyk jakie posiada jeden zawodnik
 
+Każdy wiersz w zbiorze danych odpoiwada statystyką pojedyńczego gracza w danym meczu. W zbiorze znajduje się m.in. 1) Dane zawodnika takie jak Player_ID, Player Name = imię i nazwisko zawodnika, Position = pozycja zawodnika może to być L - libero, MB - środkowy, OH - przyjmujący, O - atakujący, S - rozgrywający, Nationality = narodowość zawodnika, Age = wiek, Height= wysokość w cm 2) Dane meczu Year = rok rozrgywanych meczy w lidze narodów, Versus = drużyna przeciwna, Match_Date = data meczu, Winner = czy mecz został wygrany 3) Statystki z meczu, statystki Serve związne z zagrywką, Set związane z rogrywaniem piłki w ataku, Attack związane z wykonanymi atakami, Block związane z blokami, Reception związane z przyjęciem, Dig związne z obronami Każda z tych statystyk posiada 4 rozwijające je pola Points/Success = zdobyte punkty zagraniem, Errors = pomyłki, Attempts = podejścia nie dające punkty ale też nie tracące Total = wszystkie Points/Succes + Errors + Attempts
+
 ```{r}
 setwd("../")
 data <- read.csv("vnl_dataset.csv")
@@ -18,9 +20,11 @@ data <- data[, -which(names(data) == "Total_Serves")]
 data <- data[data$Position != "U", ]
 data$Position <- factor(data$Position)
 
+set.seed(123)
 filtered_data <- data[data$Player.Name == "Sliwka Aleksander", ]
 print(filtered_data)
 ```
+
 ### Usunięcie niepoprawnych danych
 
 ```{r}
@@ -37,7 +41,9 @@ inf_counts <- apply(dataset, 2, function(x) sum(is.infinite(x)))
 PolandSet <- dataset[dataset$Nationality == "Poland", ]
 PolandSet <- PolandSet[, sapply(PolandSet, function(x) length(unique(x)) > 1)]
 ```
+
 ### Największe wartości w zbiorze
+
 ```{r}
 print_max_stats <- function(data, stat_name) {
   max_stat_value <- max(data[[stat_name]], na.rm = TRUE)
@@ -64,7 +70,6 @@ print_max_stats(dataset, "Age")
 
 ### Przeprowadzenie regresji liniowej
 
-
 #### stworzenie modelu regresji liniowej
 
 ```{r}
@@ -72,7 +77,7 @@ model <- lm(Winner~ . -Match_Date -Player.Name -Position -Year -Dig_Attempts -Se
 summary(model)
 ```
 
-### coś
+### Dodatkowo w rozważaniach będziemy brali pod uwagę podzbiór całego zbioru będący wnikami meczów Polskich siatkarzy
 
 ```{r}
 modelPL <- lm(Winner ~ . - Match_Date -Player.Name -Position -Height-Block_Successful -Set_Successes -Dig_Attempts -Reception_Attemps -Player_ID -Age -Attack_Attempts -Serve_Attempts -Set_Attempts -Block_Rebounds -Set_Errors, data = PolandSet)
@@ -81,6 +86,8 @@ summary(modelPL)
 ```
 
 ### Regresja Logistyczna
+
+Stowrzyliśmy model regresji logistycznej, który został nauczony na 80% całości zbioru. Jak możemy zauważyć z analizy modelu znaczącę mogą być kolumny VersusAustaralia, VersusBulgaria, których wartość Estimate jest dodatnia dodatkowo warto zwrócić uwagę na VersusPoland, Attack_Errors, Reception_Errors, których wartośc Estimate jest ujemna
 
 ```{r}
 set.seed(0) 
@@ -92,6 +99,8 @@ test <- test[, !(names(test) %in% c("Player.Name"))]
 logistic <- glm(Winner ~ . - Match_Date - Nationality -Position -Reception_Successful -Dig_Attempts -Set_Successes -Year -Player_ID -Reception_Attemps -Block_Rebounds, family = binomial, data = train)
 summary(logistic)
 ```
+
+przerpowadzamy teraz predykcję jeśli wartość przewidywana jest większa od 0.5 oznaczym to że dana drużyna wygrywa mecz
 
 ```{r}
 predictions <- predict(logistic, newdata = test, type = "response")
@@ -117,6 +126,8 @@ roc_curve <- roc(test$Winner, predictions)
 plot(roc_curve, main = "ROC Curve")
 ```
 
+Dodatkowo tworzymy model regresji logistycznej dla zbioru PolandSet. Niestety nie posiadamy tutaj porządanych wartości, Najniższa wartość jest dla Dig_Success oraz Block_Errors.
+
 ```{r}
 train_indices_PL <- sample(nrow(PolandSet), 0.8 * nrow(PolandSet))  # 80% for training
 train_PL <- PolandSet[train_indices_PL, ]
@@ -125,6 +136,8 @@ logisticPL <- glm(Winner ~ . - Match_Date -Player.Name -Position
                   -Age -Height -Player_ID -Set_Successes -Set_Attempts -Versus  -Block_Successful -Dig_Attempts -Serve_Attempts -Block_Rebounds -Attack_Attempts -Reception_Errors -Reception_Errors -Reception_Attemps, family = binomial, data = train_PL)
 summary(logisticPL)
 ```
+
+przeprowadzamy predykcję dla zbioru PolandSet, jak będzie widać ponizej wartość accuracy tego modelu jest na dosyć wysokim poziomie.
 
 ```{r}
 predictions <- predict(logisticPL, newdata = test_PL, type = "response")
@@ -156,10 +169,12 @@ plot(roc_curve, main = "ROC Curve")
 install.packages("randomForest")
 library(randomForest)
 ```
+
 ### Stworzenie drzewa dla zbioru wyników wszystkich meczy
+
+W celu testowania i trenowania zbioru tworzymy nowe zbiory testowe, specjalnie dla random forest. Tworzymy dwa modele jeden z dla całego zbioru drugi dla zbioru meczów Polaków. Dla każdego modelu wyliczamy MSE. Wynosi on w przybliżeniu 0.1 co jest stosunkowo dużo dla przewidywnych wartości z przediału 0-1
 ```{r}
-set.seed(123)
-train_rf <- sample(1:nrow(dataset), 0.7 * nrow(dataset))  # 70% training data
+train_rf <- sample(1:nrow(dataset), 0.8 * nrow(dataset))  
 test_rf <- setdiff(1:nrow(dataset), train_rf)
 
 rf <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = dataset, subset = train_rf, importance = TRUE)
@@ -169,9 +184,11 @@ pred_rf <- predict(rf, newdata = dataset[test_rf, ])
 mse_rfPL <- mean((pred_rf - dataset$Winner[test_rf])^2)
 print(mse_rfPL)
 ```
+
 ### Stworzenie modelu randomForest dla zbioru Polskich zawodników
+Tworzymy model dla zbioru Polaków i obliczamy MSE. Wypada on ciutkę lepiej od wartości dla całego zbioru.
 ```{r}
-trainPL_rf <- sample(1:nrow(PolandSet), 0.7 * nrow(PolandSet))  # 70% training data
+trainPL_rf <- sample(1:nrow(PolandSet), 0.8 * nrow(PolandSet))  
 testPL_rf <- setdiff(1:nrow(PolandSet), trainPL_rf)
 
 rfPL <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = PolandSet, subset = trainPL_rf, importance = TRUE)
@@ -181,7 +198,9 @@ pred_rfPL <- predict(rfPL, newdata = PolandSet[testPL_rf, ])
 mse_rfPL <- mean((pred_rfPL - PolandSet$Winner[testPL_rf])^2)
 print(mse_rfPL)
 ```
+
 #### Wyniki dla zbioru wszystkich siatkarzy
+Teraz wyświetlimy wartości jakie model przewidziaj w porównaniu z prawdziwymi oraz policzymy jego dokładność zarówno dla zbioru pełnego jak i Polskiego.
 ```{r}
 predicted_rf_binary <- ifelse(pred_rf > 0.5, 1, 0)
 conf_matrix <- table(Predicted = predicted_rf_binary, Actual = dataset$Winner[test_rf])
@@ -191,10 +210,13 @@ print(conf_matrix)
 accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
 print(paste("Accuracy:", round(accuracy, 4)))
 ```
+
 ```{r}
 importance(rf)
 ```
+
 #### Wyniki dla zbioru Polskich siatkarzy
+
 ```{r}
 pred_rf_binaryPL <- ifelse(pred_rfPL > 0.5, 1, 0)
 
@@ -205,15 +227,16 @@ print(conf_matrixPL)
 accuracyPL <- sum(diag(conf_matrixPL)) / sum(conf_matrixPL)
 print(paste("Accuracy:", round(accuracyPL, 4)))
 ```
+
 ```{r}
 importance(rfPL)
 ```
 
 ## Badanie pozycji
+
 ```{r}
 library(class)
 ```
-
 
 ```{r}
 train_knn <- train[, !(names(train) %in% c("Versus","Match_Date","Nationality","Winner","Position"))]
@@ -228,6 +251,7 @@ accuracy <- sum(diag(t)) / sum(t)
 print(t)
 print(paste("Accuracy:", accuracy))
 ```
+
 ```{r}
 set.seed(123)
 rf_pos <- randomForest(Position ~ . - Match_Date -Player.Name -Player_ID -Versus -Nationality -Winner, data = dataset, subset = train_rf, importance = TRUE)
@@ -240,8 +264,6 @@ print(conf_matrix_pos)
 accuracy_pos <- sum(diag(conf_matrix_pos)) / sum(conf_matrix_pos)
 print(paste("Accuracy:", round(accuracy_pos, 4)))
 ```
-Dla Polskiego składu
-
 ```{r}
 train_knn_PL <- train_PL[, !(names(train_PL) %in% c("Versus","Match_Date","Winner","Position", "Player.Name"))]
 test_knn_PL <- test_PL[, !(names(test_PL) %in% c("Versus","Match_Date","Winner","Position", "Player.Name"))]
@@ -254,16 +276,4 @@ t_PL <- table(knn_pos_PL,class_knn_test_PL)
 accuracy_PL <- sum(diag(t_PL)) / sum(t_PL)
 print(t_PL)
 print(paste("Accuracy:", accuracy_PL))
-```
-```{r}
-set.seed(123)
-rf_pos_PL <- randomForest(Position ~ . - Match_Date -Player.Name -Player_ID -Versus -Winner, data = PolandSet, subset = trainPL_rf, importance = TRUE)
-
-pred_rf_pos_PL <- predict(rf_pos_PL, newdata = PolandSet[testPL_rf, ])
-conf_matrix_pos_PL <- table(Predicted = pred_rf_pos_PL, Actual = PolandSet$Position[testPL_rf])
-
-print(conf_matrix_pos_PL)
-
-accuracy_pos_PL <- sum(diag(conf_matrix_pos_PL)) / sum(conf_matrix_pos_PL)
-print(paste("Accuracy:", round(accuracy_pos_PL, 4)))
 ```
