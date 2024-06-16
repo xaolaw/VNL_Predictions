@@ -251,6 +251,8 @@ test_knn <- test[, !(names(test) %in% c("Versus","Match_Date","Nationality","Win
 class_knn <- dataset$Position[train_indices]
 knn_pos <- knn(train = train_knn, test = test_knn, cl = class_knn, k=3)
 
+summary(knn_pos)
+
 class_knn_test <- dataset$Position[-train_indices]
 t <- table(knn_pos,class_knn_test)
 
@@ -276,6 +278,8 @@ train_knn_PL <- train_PL[, !(names(train_PL) %in% c("Versus","Match_Date","Winne
 test_knn_PL <- test_PL[, !(names(test_PL) %in% c("Versus","Match_Date","Winner","Position", "Player.Name"))]
 class_knn_PL <- PolandSet$Position[train_indices_PL]
 knn_pos_PL <- knn(train = train_knn_PL, test = test_knn_PL, cl = class_knn_PL, k=3)
+
+summary(knn_pos_PL)
 
 class_knn_test_PL <- PolandSet$Position[-train_indices_PL]
 t_PL <- table(knn_pos_PL,class_knn_test_PL)
