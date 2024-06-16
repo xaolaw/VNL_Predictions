@@ -118,9 +118,9 @@ plot(roc_curve, main = "ROC Curve")
 ```
 
 ```{r}
-train_indices <- sample(nrow(PolandSet), 0.8 * nrow(PolandSet))  # 80% for training
-train_PL <- PolandSet[train_indices, ]
-test_PL <- PolandSet[-train_indices, ]
+train_indices_PL <- sample(nrow(PolandSet), 0.8 * nrow(PolandSet))  # 80% for training
+train_PL <- PolandSet[train_indices_PL, ]
+test_PL <- PolandSet[-train_indices_PL, ]
 logisticPL <- glm(Winner ~ . - Match_Date -Player.Name -Position
                   -Age -Height -Player_ID -Set_Successes -Set_Attempts -Versus  -Block_Successful -Dig_Attempts -Serve_Attempts -Block_Rebounds -Attack_Attempts -Reception_Errors -Reception_Errors -Reception_Attemps, family = binomial, data = train_PL)
 summary(logisticPL)
@@ -159,32 +159,32 @@ library(randomForest)
 ### Stworzenie drzewa dla zbioru wyników wszystkich meczy
 ```{r}
 set.seed(123)
-train <- sample(1:nrow(dataset), 0.7 * nrow(dataset))  # 70% training data
-test <- setdiff(1:nrow(dataset), train)
+train_rf <- sample(1:nrow(dataset), 0.7 * nrow(dataset))  # 70% training data
+test_rf <- setdiff(1:nrow(dataset), train_rf)
 
-rf <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = dataset, subset = train, importance = TRUE)
+rf <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = dataset, subset = train_rf, importance = TRUE)
 
-pred_rf <- predict(rf, newdata = dataset[test, ])
+pred_rf <- predict(rf, newdata = dataset[test_rf, ])
 
-mse_rfPL <- mean((pred_rf - dataset$Winner[test])^2)
+mse_rfPL <- mean((pred_rf - dataset$Winner[test_rf])^2)
 print(mse_rfPL)
 ```
 ### Stworzenie modelu randomForest dla zbioru Polskich zawodników
 ```{r}
-trainPL <- sample(1:nrow(PolandSet), 0.7 * nrow(PolandSet))  # 70% training data
-testPL <- setdiff(1:nrow(PolandSet), trainPL)
+trainPL_rf <- sample(1:nrow(PolandSet), 0.7 * nrow(PolandSet))  # 70% training data
+testPL_rf <- setdiff(1:nrow(PolandSet), trainPL_rf)
 
-rfPL <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = PolandSet, subset = trainPL, importance = TRUE)
+rfPL <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = PolandSet, subset = trainPL_rf, importance = TRUE)
 
-pred_rfPL <- predict(rfPL, newdata = PolandSet[testPL, ])
+pred_rfPL <- predict(rfPL, newdata = PolandSet[testPL_rf, ])
   
-mse_rfPL <- mean((pred_rfPL - PolandSet$Winner[testPL])^2)
+mse_rfPL <- mean((pred_rfPL - PolandSet$Winner[testPL_rf])^2)
 print(mse_rfPL)
 ```
 #### Wyniki dla zbioru wszystkich siatkarzy
 ```{r}
 predicted_rf_binary <- ifelse(pred_rf > 0.5, 1, 0)
-conf_matrix <- table(Predicted = predicted_rf_binary, Actual = dataset$Winner[test])
+conf_matrix <- table(Predicted = predicted_rf_binary, Actual = dataset$Winner[test_rf])
 
 print(conf_matrix)
 
@@ -198,7 +198,7 @@ importance(rf)
 ```{r}
 pred_rf_binaryPL <- ifelse(pred_rfPL > 0.5, 1, 0)
 
-conf_matrixPL <- table(Predicted = pred_rf_binaryPL, Actual = PolandSet$Winner[testPL])
+conf_matrixPL <- table(Predicted = pred_rf_binaryPL, Actual = PolandSet$Winner[testPL_rf])
 
 print(conf_matrixPL)
 
@@ -211,3 +211,14 @@ importance(rfPL)
 
 ## Badanie Nationality
 ## Badanie pozycji
+```{r}
+library(class)
+```
+
+
+```{r}
+class_knn <- dataset$Position[train_indices]
+knn_pos <- knn(train = train, test = test, cl = class_knn, k=1)
+
+table(train$Position[train_indices], knn_pos)
+```
