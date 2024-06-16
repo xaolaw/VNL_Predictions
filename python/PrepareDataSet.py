@@ -37,6 +37,11 @@ player_info_data = player_info_data[['Player_ID', 'Player Name', 'Position', 'Na
 merged_data = pd.merge(player_info_data,merged_data,on=['Player_ID','Year'], how='inner')
 
 merged_data['Winner'] = merged_data['Nationality'] == merged_data['Winner']
+merged_data['Versus'] = merged_data.apply(lambda x: f"{x['TeamB']}" if x['TeamA'] == x['Nationality'] else f"{x['TeamA']}", axis=1)
+merged_data.drop(['TeamA', 'TeamB'], axis=1, inplace=True)
 
+cols = merged_data.columns.tolist()
+cols.insert(cols.index('Year') + 1, cols.pop(cols.index('Versus')))
+merged_data = merged_data[cols]
 merged_data.to_csv('../vnl_dataset.csv', index=False)
 

@@ -6,16 +6,20 @@
 setwd("../")
 data <- read.csv("vnl_dataset.csv")
 data$Winner <- data$Winner == "True"
-data$Position <- factor(data$Position)
 data$Nationality <- factor(data$Nationality)
-
+data$Versus <- factor(data$Versus)
+data <- data[, -which(names(data) == "Total_Attacks")]
+data <- data[, -which(names(data) == "Total_Blocks")]
+data <- data[, -which(names(data) == "Total_Receptions")]
+data <- data[, -which(names(data) == "Total_Digs")]
+data <- data[, -which(names(data) == "Total_Sets")]
+data <- data[, -which(names(data) == "Total_Serves")]
+data <- data[data$Position != "U", ]
+data$Position <- factor(data$Position)
 
 filtered_data <- data[data$Player.Name == "Sliwka Aleksander", ]
 print(filtered_data)
 ```
-
-## Przeprowadzenie regresji liniowej
-
 ### Usunięcie niepoprawnych danych
 
 ```{r}
@@ -29,32 +33,60 @@ na_counts <- apply(dataset, 2, function(x) sum(is.na(x)))
 nan_counts <- apply(dataset, 2, function(x) sum(is.nan(x)))
 inf_counts <- apply(dataset, 2, function(x) sum(is.infinite(x)))
 
+PolandSet <- dataset[dataset$Nationality == "Poland", ]
+PolandSet <- PolandSet[, sapply(PolandSet, function(x) length(unique(x)) > 1)]
+```
+### Największe wartości w zbiorze
+```{r}
+print_max_stats <- function(data, stat_name) {
+  max_stat_value <- max(data[[stat_name]], na.rm = TRUE)
+  
+  max_stat_rows <- data[data[[stat_name]] == max_stat_value, c("Player.Name", stat_name)]
+  
+  print(max_stat_rows)
+}
+
+print_max_stats(dataset, "Serve_Points")
+
+print_max_stats(dataset, "Attack_Success")
+
+print_max_stats(dataset, "Reception_Successful")
+
+print_max_stats(dataset, "Block_Successful")
+
+print_max_stats(dataset, "Height")
+
+print_max_stats(dataset, "Age")
 ```
 
-### stworzenie modelu regresji liniowej
+## Badanie problemu wygranych meczy
+
+### Przeprowadzenie regresji liniowej
+
+
+#### stworzenie modelu regresji liniowej
 
 ```{r}
-model <- lm(Winner~ . -Match_Date -Player.Name -TeamA - TeamB,data=dataset)
+model <- lm(Winner~ . -Match_Date -Player.Name -Position -Year -Dig_Attempts -Set_Successes -Reception_Attemps -Age -Player_ID,data=dataset)
 summary(model)
 ```
 
 ### coś
 
 ```{r}
-PolandSet <- dataset[dataset$Nationality == "Poland", ]
-PolandSet <- PolandSet[, sapply(PolandSet, function(x) length(unique(x)) > 1)]
-modelPL <- lm(Winner ~ . - Match_Date -Player.Name -TeamA - TeamB, data = PolandSet)
+modelPL <- lm(Winner ~ . - Match_Date -Player.Name -Position -Height-Block_Successful -Set_Successes -Dig_Attempts -Reception_Attemps -Player_ID -Age -Attack_Attempts -Serve_Attempts -Set_Attempts -Block_Rebounds -Set_Errors, data = PolandSet)
 summary(modelPL)
 
 ```
 
-## Regresja Logistyczna
+### Regresja Logistyczna
 
 ```{r}
+set.seed(0) 
 train_indices <- sample(nrow(dataset), 0.8 * nrow(dataset))  # 80% for training
 train <- dataset[train_indices, ]
 test <- dataset[-train_indices, ]
-logistic <- glm(Winner ~ . - Match_Date - Nationality -Player.Name -TeamA - TeamB, family = binomial, data = train)
+logistic <- glm(Winner ~ . - Match_Date - Nationality -Player.Name -Position -Reception_Successful -Dig_Attempts -Set_Successes -Year -Player_ID -Reception_Attemps -Block_Rebounds, family = binomial, data = train)
 summary(logistic)
 ```
 
@@ -83,11 +115,11 @@ plot(roc_curve, main = "ROC Curve")
 ```
 
 ```{r}
-set.seed(0) 
 train_indices <- sample(nrow(PolandSet), 0.8 * nrow(PolandSet))  # 80% for training
 train_PL <- PolandSet[train_indices, ]
 test_PL <- PolandSet[-train_indices, ]
-logisticPL <- glm(Winner ~ . - Match_Date -Player.Name -TeamA - TeamB, family = binomial, data = train_PL)
+logisticPL <- glm(Winner ~ . - Match_Date -Player.Name -Position
+                  -Age -Height -Player_ID -Set_Successes -Set_Attempts -Versus  -Block_Successful -Dig_Attempts -Serve_Attempts -Block_Rebounds -Attack_Attempts -Reception_Errors -Reception_Errors -Reception_Attemps, family = binomial, data = train_PL)
 summary(logisticPL)
 ```
 
@@ -114,3 +146,65 @@ library(pROC)
 roc_curve <- roc(test_PL$Winner, predictions)
 plot(roc_curve, main = "ROC Curve")
 ```
+
+### Las
+
+```{r}
+install.packages("randomForest")
+library(randomForest)
+```
+### Stworzenie drzewa dla zbioru wyników wszystkich meczy
+```{r}
+set.seed(123)
+train <- sample(1:nrow(dataset), 0.7 * nrow(dataset))  # 70% training data
+test <- setdiff(1:nrow(dataset), train)
+
+rf <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = dataset, subset = train, importance = TRUE)
+
+pred_rf <- predict(rf, newdata = dataset[test, ])
+
+mse_rfPL <- mean((pred_rf - dataset$Winner[test])^2)
+print(mse_rfPL)
+```
+### Stworzenie modelu randomForest dla zbioru Polskich zawodników
+```{r}
+trainPL <- sample(1:nrow(PolandSet), 0.7 * nrow(PolandSet))  # 70% training data
+testPL <- setdiff(1:nrow(PolandSet), trainPL)
+
+rfPL <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = PolandSet, subset = trainPL, importance = TRUE)
+
+pred_rfPL <- predict(rfPL, newdata = PolandSet[testPL, ])
+  
+mse_rfPL <- mean((pred_rfPL - PolandSet$Winner[testPL])^2)
+print(mse_rfPL)
+```
+#### Wyniki dla zbioru wszystkich siatkarzy
+```{r}
+predicted_rf_binary <- ifelse(pred_rf > 0.5, 1, 0)
+conf_matrix <- table(Predicted = predicted_rf_binary, Actual = dataset$Winner[test])
+
+print(conf_matrix)
+
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+print(paste("Accuracy:", round(accuracy, 4)))
+```
+```{r}
+importance(rf)
+```
+#### Wyniki dla zbioru Polskich siatkarzy
+```{r}
+pred_rf_binaryPL <- ifelse(pred_rfPL > 0.5, 1, 0)
+
+conf_matrixPL <- table(Predicted = pred_rf_binaryPL, Actual = PolandSet$Winner[testPL])
+
+print(conf_matrixPL)
+
+accuracyPL <- sum(diag(conf_matrixPL)) / sum(conf_matrixPL)
+print(paste("Accuracy:", round(accuracyPL, 4)))
+```
+```{r}
+importance(rfPL)
+```
+
+## Badanie Nationality
+## Badanie pozycji
