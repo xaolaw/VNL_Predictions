@@ -240,29 +240,30 @@ print(conf_matrix_pos)
 accuracy_pos <- sum(diag(conf_matrix_pos)) / sum(conf_matrix_pos)
 print(paste("Accuracy:", round(accuracy_pos, 4)))
 ```
+Dla Polskiego składu
+
 ```{r}
-#install.packages("xgboost")
-install.packages("gbm")
-library(xgboost)
-library(gbm)
+train_knn_PL <- train_PL[, !(names(train_PL) %in% c("Versus","Match_Date","Winner","Position", "Player.Name"))]
+test_knn_PL <- test_PL[, !(names(test_PL) %in% c("Versus","Match_Date","Winner","Position", "Player.Name"))]
+class_knn_PL <- PolandSet$Position[train_indices_PL]
+knn_pos_PL <- knn(train = train_knn_PL, test = test_knn_PL, cl = class_knn_PL, k=3)
+
+class_knn_test_PL <- PolandSet$Position[-train_indices_PL]
+t_PL <- table(knn_pos_PL,class_knn_test_PL)
+
+accuracy_PL <- sum(diag(t_PL)) / sum(t_PL)
+print(t_PL)
+print(paste("Accuracy:", accuracy_PL))
 ```
 ```{r}
-pos_boost <- gbm(Position ~ . - Match_Date -Player_ID -Versus -Nationality -Winner, data = train, distribution = "gaussian",
-                  n.trees = 5000, interaction.depth = 4)
-pos_boost
-```
-```{r}
-pos_pred_boost <- predict(pos_boost, newdata = test, n.trees = 5000,type = "response")
-class_names = colnames(pos_pred_boost)[apply(pos_pred_boost, 1, which.max)]
-result = data.frame(test$Position, class_names)
- 
-print(result)
-conf_mat = confusionMatrix(test$Position, as.factor(class_names))
-print(conf_mat)
-```
-```{r}
-summary(pos_boost)
-```
-```{r}
-plot(pos_boost, i.var = "Age")
+set.seed(123)
+rf_pos_PL <- randomForest(Position ~ . - Match_Date -Player.Name -Player_ID -Versus -Winner, data = PolandSet, subset = trainPL_rf, importance = TRUE)
+
+pred_rf_pos_PL <- predict(rf_pos_PL, newdata = PolandSet[testPL_rf, ])
+conf_matrix_pos_PL <- table(Predicted = pred_rf_pos_PL, Actual = PolandSet$Position[testPL_rf])
+
+print(conf_matrix_pos_PL)
+
+accuracy_pos_PL <- sum(diag(conf_matrix_pos_PL)) / sum(conf_matrix_pos_PL)
+print(paste("Accuracy:", round(accuracy_pos_PL, 4)))
 ```
