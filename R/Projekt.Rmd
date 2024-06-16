@@ -39,6 +39,7 @@ summary(model)
 ```
 
 ### coś
+
 ```{r}
 PolandSet <- dataset[dataset$Nationality == "Poland", ]
 PolandSet <- PolandSet[, sapply(PolandSet, function(x) length(unique(x)) > 1)]
@@ -46,34 +47,24 @@ modelPL <- lm(Winner ~ . - Match_Date -Player.Name -TeamA - TeamB, data = Poland
 summary(modelPL)
 
 ```
+
+## Regresja Logistyczna
+
 ```{r}
-logistic <- glm(Winner ~ . - Match_Date - Nationality -Player.Name -TeamA - TeamB, family = binomial, data = dataset)
+train_indices <- sample(nrow(dataset), 0.8 * nrow(dataset))  # 80% for training
+train <- dataset[train_indices, ]
+test <- dataset[-train_indices, ]
+logistic <- glm(Winner ~ . - Match_Date - Nationality -Player.Name -TeamA - TeamB, family = binomial, data = train)
 summary(logistic)
 ```
+
 ```{r}
-set.seed(123) 
-train_indices <- sample(nrow(dataset), 0.8 * nrow(dataset))  # 80% for training
-train_PL <- PolandSet[train_indices, ]
-test_PL <- PolandSet[-train_indices, ]
-logisticPL <- glm(Winner ~ . - Match_Date -Player.Name -TeamA - TeamB, family = binomial, data = train_PL)
-summary(logisticPL)
-```
-```{r}
-PolandSet$probs <- predict(logisticPL, type = "response")
-final <- PolandSet[PolandSet$Match_Date == "2023-07-23", c("Player.Name", "Position", "Year", "TeamA", "TeamB", "Match_Date", "Winner", "probs","Serve_Points","Serve_Errors", "Serve_Attempts", 
-                                      "Set_Successes", "Set_Errors", "Set_Attempts", 
-                                      "Attack_Success", "Attack.Errors", "Attack_Attempts", 
-                                      "Block_Successful", "Block_Errors", "Block_Rebounds", 
-                                      "Reception_Successful", "Reception_Errors", "Reception_Attemps", 
-                                      "Dig_Success", "Dig_Errors", "Dig_Attempts")]
-final
-```
-```{r}
-predictions <- predict(logisticPL, newdata = test_PL, type = "response")
+predictions <- predict(logistic, newdata = test, type = "response")
 predicted_classes <- ifelse(predictions > 0.5, 1, 0)
-cm <- table(Actual = test_PL$Winner, Predicted = predicted_classes)
+cm <- table(Actual = test$Winner, Predicted = predicted_classes)
 print(cm)
 ```
+
 ```{r}
 accuracy <- sum(diag(cm)) / sum(cm)
 cat("Accuracy:", accuracy, "\n")
@@ -84,6 +75,40 @@ cat("Sensitivity (TPR):", sensitivity, "\n")
 specificity <- cm[1, 1] / sum(cm[1, ])
 cat("Specificity (TNR):", specificity, "\n")
 ```
+
+```{r}
+library(pROC)
+roc_curve <- roc(test$Winner, predictions)
+plot(roc_curve, main = "ROC Curve")
+```
+
+```{r}
+set.seed(0) 
+train_indices <- sample(nrow(PolandSet), 0.8 * nrow(PolandSet))  # 80% for training
+train_PL <- PolandSet[train_indices, ]
+test_PL <- PolandSet[-train_indices, ]
+logisticPL <- glm(Winner ~ . - Match_Date -Player.Name -TeamA - TeamB, family = binomial, data = train_PL)
+summary(logisticPL)
+```
+
+```{r}
+predictions <- predict(logisticPL, newdata = test_PL, type = "response")
+predicted_classes <- ifelse(predictions > 0.5, 1, 0)
+cm <- table(Actual = test_PL$Winner, Predicted = predicted_classes)
+print(cm)
+```
+
+```{r}
+accuracy <- sum(diag(cm)) / sum(cm)
+cat("Accuracy:", accuracy, "\n")
+
+sensitivity <- cm[2, 2] / sum(cm[2, ])
+cat("Sensitivity (TPR):", sensitivity, "\n")
+
+specificity <- cm[1, 1] / sum(cm[1, ])
+cat("Specificity (TNR):", specificity, "\n")
+```
+
 ```{r}
 library(pROC)
 roc_curve <- roc(test_PL$Winner, predictions)
