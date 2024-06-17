@@ -72,6 +72,13 @@ print_max_stats(dataset, "Age")
 
 #### stworzenie modelu regresji liniowej
 
+Przede wszystkim widać, że większość Nationality oraz Versus prawdopodobnie wpływa na wynik meczu. Z racji na naturę statystyk Nationality oraz Versus, mogliśmy się spodziewać, że będą one przeciwne do siebie i to się sprawdziło. Domyślnymi wartościami jest Argentyna (pierwsza alfabetycznie).
+
+Można na podstawie tej części wyników zobaczyć, że Polska drużyna radziła sobie w tamtych czasach najlepiej, poprzez najmniejszy współczynnik przy Versus oraz największy przy Nationality (spośród wartości wpływających na wynik).
+Można porównać współczynniki w przypadku Nationality i Versus, ponieważ obrazują one te same dane i są proporcjonalne do siebie.
+
+Poza drużynami w których gra zawodnik, na jego przydatność wpływać może wzrost (ale ujemnie) i większość statystyk z gry. Na wynik nie wpływa np. wiek zawodnika.
+
 ```{r}
 model <- lm(Winner~ . -Match_Date -Player.Name -Position -Year -Dig_Attempts -Set_Successes -Reception_Attemps -Age -Player_ID,data=dataset)
 summary(model)
@@ -100,7 +107,7 @@ logistic <- glm(Winner ~ . - Match_Date - Nationality -Position -Reception_Succe
 summary(logistic)
 ```
 
-przerpowadzamy teraz predykcję jeśli wartość przewidywana jest większa od 0.5 oznaczym to że dana drużyna wygrywa mecz
+przeprowadzamy teraz predykcję jeśli wartość przewidywana jest większa od 0.5 oznacza to że dana drużyna wygrywa mecz
 
 ```{r}
 predictions <- predict(logistic, newdata = test, type = "response")
@@ -250,6 +257,8 @@ test_knn <- test[, !(names(test) %in% c("Versus","Match_Date","Nationality","Win
 class_knn <- dataset$Position[train_indices]
 knn_pos <- knn(train = train_knn, test = test_knn, cl = class_knn, k=3)
 
+summary(knn_pos)
+
 class_knn_test <- dataset$Position[-train_indices]
 t <- table(knn_pos,class_knn_test)
 
@@ -274,4 +283,19 @@ print(paste("Accuracy:", round(accuracy_pos, 4)))
 importance(rf_pos)
 plot(rf_pos, type = "l")
 varImpPlot(rf_pos)
+
+```{r}
+train_knn_PL <- train_PL[, !(names(train_PL) %in% c("Versus","Match_Date","Winner","Position", "Player.Name"))]
+test_knn_PL <- test_PL[, !(names(test_PL) %in% c("Versus","Match_Date","Winner","Position", "Player.Name"))]
+class_knn_PL <- PolandSet$Position[train_indices_PL]
+knn_pos_PL <- knn(train = train_knn_PL, test = test_knn_PL, cl = class_knn_PL, k=3)
+
+summary(knn_pos_PL)
+
+class_knn_test_PL <- PolandSet$Position[-train_indices_PL]
+t_PL <- table(knn_pos_PL,class_knn_test_PL)
+
+accuracy_PL <- sum(diag(t_PL)) / sum(t_PL)
+print(t_PL)
+print(paste("Accuracy:", accuracy_PL))
 ```
