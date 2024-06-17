@@ -1,8 +1,19 @@
-# Analiza zbioru statystyk siatkarzy z VNL 2021-2023 i próba predykcji czy siatkarz z danymi statystykami wygra mecz
+---
+title: "Analiza zbioru statystyk siatkarzy z VNL 2021-2023 i próba predykcji czy siatkarz z danymi statystykami wygra mecz, predykcja pozycji siatkarza"
+author: "Adam Cwikla i Michal Szewc"
+date: "2024-06-17"
+output: html_document
+---
 
 ## Prezentacja statystyk jakie posiada jeden zawodnik
 
-Każdy wiersz w zbiorze danych odpoiwada statystyką pojedyńczego gracza w danym meczu. W zbiorze znajduje się m.in. 1) Dane zawodnika takie jak Player_ID, Player Name = imię i nazwisko zawodnika, Position = pozycja zawodnika może to być L - libero, MB - środkowy, OH - przyjmujący, O - atakujący, S - rozgrywający, Nationality = narodowość zawodnika, Age = wiek, Height= wysokość w cm 2) Dane meczu Year = rok rozrgywanych meczy w lidze narodów, Versus = drużyna przeciwna, Match_Date = data meczu, Winner = czy mecz został wygrany 3) Statystki z meczu, statystki Serve związne z zagrywką, Set związane z rogrywaniem piłki w ataku, Attack związane z wykonanymi atakami, Block związane z blokami, Reception związane z przyjęciem, Dig związne z obronami Każda z tych statystyk posiada 4 rozwijające je pola Points/Success = zdobyte punkty zagraniem, Errors = pomyłki, Attempts = podejścia nie dające punkty ale też nie tracące Total = wszystkie Points/Succes + Errors + Attempts
+Każdy wiersz w zbiorze danych odpoiwada statystyką pojedyńczego gracza w danym meczu. W zbiorze znajduje się m.in.
+
+1) Dane zawodnika takie jak Player_ID, Player Name = imię i nazwisko zawodnika, Position = pozycja zawodnika może to być L - libero, MB - środkowy, OH - przyjmujący, O - atakujący, S - rozgrywający, Nationality = narodowość zawodnika, Age = wiek, Height= wysokość w cm
+
+2) Dane meczu Year = rok rozrgywanych meczy w lidze narodów, Versus = drużyna przeciwna, Match_Date = data meczu, Winner = czy mecz został wygrany
+
+3) Statystki z meczu, statystki Serve związne z zagrywką, Set związane z rogrywaniem piłki w ataku, Attack związane z wykonanymi atakami, Block związane z blokami, Reception związane z przyjęciem, Dig związne z obronami Każda z tych statystyk posiada 4 rozwijające je pola Points/Success = zdobyte punkty zagraniem, Errors = pomyłki, Attempts = podejścia nie dające punkty ale też nie tracące Total = wszystkie Points/Succes + Errors + Attempts
 
 ```{r}
 setwd("../")
@@ -20,6 +31,20 @@ data <- data[, -which(names(data) == "Total_Serves")]
 data <- data[data$Position != "U", ]
 data$Position <- factor(data$Position)
 
+data_woman <- read.csv("vnl_dataset_woman.csv")
+data_woman$Winner <- data_woman$Winner == "True"
+data_woman$Nationality <- factor(data_woman$Nationality)
+data_woman$Player.Name <- factor(data_woman$Player.Name)
+data_woman$Versus <- factor(data_woman$Versus)
+data_woman <- data_woman[, -which(names(data_woman) == "Total_Attacks")]
+data_woman <- data_woman[, -which(names(data_woman) == "Total_Blocks")]
+data_woman <- data_woman[, -which(names(data_woman) == "Total_Receptions")]
+data_woman <- data_woman[, -which(names(data_woman) == "Total_Digs")]
+data_woman <- data_woman[, -which(names(data_woman) == "Total_Sets")]
+data_woman <- data_woman[, -which(names(data_woman) == "Total_Serves")]
+data_woman <- data_woman[data_woman$Position != "U", ]
+data_woman$Position <- factor(data_woman$Position)
+
 set.seed(123)
 filtered_data <- data[data$Player.Name == "Sliwka Aleksander", ]
 print(filtered_data)
@@ -34,9 +59,13 @@ inf_counts <- apply(data, 2, function(x) sum(is.infinite(x)))
 
 dataset <- data[complete.cases(data) & !apply(data, 1, function(x) any(is.nan(x) | is.infinite(x))), ]
 
-na_counts <- apply(dataset, 2, function(x) sum(is.na(x)))
-nan_counts <- apply(dataset, 2, function(x) sum(is.nan(x)))
-inf_counts <- apply(dataset, 2, function(x) sum(is.infinite(x)))
+data_woman$Height <- as.integer(data_woman$Height)
+na_counts <- apply(data_woman, 2, function(x) sum(is.na(x)))
+nan_counts <- apply(data_woman, 2, function(x) sum(is.nan(x)))
+inf_counts <- apply(data_woman, 2, function(x) sum(is.infinite(x)))
+
+dataset_woman <- data_woman[complete.cases(data_woman) & !apply(data_woman, 1, function(x) any(is.nan(x) | is.infinite(x))),]
+
 
 PolandSet <- dataset[dataset$Nationality == "Poland", ]
 PolandSet <- PolandSet[, sapply(PolandSet, function(x) length(unique(x)) > 1)]
@@ -74,13 +103,17 @@ print_max_stats(dataset, "Age")
 
 Przede wszystkim widać, że większość Nationality oraz Versus prawdopodobnie wpływa na wynik meczu. Z racji na naturę statystyk Nationality oraz Versus, mogliśmy się spodziewać, że będą one przeciwne do siebie i to się sprawdziło. Domyślnymi wartościami jest Argentyna (pierwsza alfabetycznie).
 
-Można na podstawie tej części wyników zobaczyć, że Polska drużyna radziła sobie w tamtych czasach najlepiej, poprzez najmniejszy współczynnik przy Versus oraz największy przy Nationality (spośród wartości wpływających na wynik).
-Można porównać współczynniki w przypadku Nationality i Versus, ponieważ obrazują one te same dane i są proporcjonalne do siebie.
+Można na podstawie tej części wyników zobaczyć, że Polska drużyna radziła sobie w tamtych czasach najlepiej, poprzez najmniejszy współczynnik przy Versus oraz największy przy Nationality (spośród wartości wpływających na wynik). Można porównać współczynniki w przypadku Nationality i Versus, ponieważ obrazują one te same dane i są proporcjonalne do siebie.
 
 Poza drużynami w których gra zawodnik, na jego przydatność wpływać może wzrost (ale ujemnie) i większość statystyk z gry. Na wynik nie wpływa np. wiek zawodnika.
 
 ```{r}
 model <- lm(Winner~ . -Match_Date -Player.Name -Position -Year -Dig_Attempts -Set_Successes -Reception_Attemps -Age -Player_ID,data=dataset)
+summary(model)
+```
+
+```{r}
+model <- lm(Winner~ . -Match_Date -Player.Name -Position -Year -Dig_Attempts -Set_Successes -Reception_Attemps -Age -Player_ID,data=dataset_woman)
 summary(model)
 ```
 
@@ -140,7 +173,7 @@ train_indices_PL <- sample(nrow(PolandSet), 0.8 * nrow(PolandSet))  # 80% for tr
 train_PL <- PolandSet[train_indices_PL, ]
 test_PL <- PolandSet[-train_indices_PL, ]
 logisticPL <- glm(Winner ~ . - Match_Date -Player.Name -Position
-                  -Age -Height -Player_ID -Set_Successes -Set_Attempts -Versus  -Block_Successful -Dig_Attempts -Serve_Attempts -Block_Rebounds -Attack_Attempts -Reception_Errors -Reception_Errors -Reception_Attemps, family = binomial, data = train_PL)
+                  -Age -Height -Player_ID -Set_Successes -Set_Attempts -Versus  -Block_Successful -Dig_Attempts -Year -Serve_Attempts -Block_Rebounds -Attack_Attempts -Reception_Errors -Reception_Errors -Reception_Attemps, family = binomial, data = train_PL)
 summary(logisticPL)
 ```
 
@@ -173,13 +206,14 @@ plot(roc_curve, main = "ROC Curve")
 ### Las
 
 ```{r}
-install.packages("randomForest")
+#install.packages("randomForest")
 library(randomForest)
 ```
 
 ### Stworzenie drzewa dla zbioru wyników wszystkich meczy
 
 W celu testowania i trenowania zbioru tworzymy nowe zbiory testowe, specjalnie dla random forest. Tworzymy dwa modele jeden z dla całego zbioru drugi dla zbioru meczów Polaków. Dla każdego modelu wyliczamy MSE. Wynosi on w przybliżeniu 0.1 co jest stosunkowo dużo dla przewidywnych wartości z przediału 0-1
+
 ```{r}
 train_rf <- sample(1:nrow(dataset), 0.8 * nrow(dataset))  
 test_rf <- setdiff(1:nrow(dataset), train_rf)
@@ -188,13 +222,15 @@ rf <- randomForest(Winner ~ . - Match_Date -Player.Name -Player_ID, data = datas
 
 pred_rf <- predict(rf, newdata = dataset[test_rf, ])
 
-mse_rfPL <- mean((pred_rf - dataset$Winner[test_rf])^2)
+mse_rf <- mean((pred_rf - dataset$Winner[test_rf])^2)
 print(rf)
-print(mse_rfPL)
+print(mse_rf)
 ```
 
 ### Stworzenie modelu randomForest dla zbioru Polskich zawodników
+
 Tworzymy model dla zbioru Polaków i obliczamy MSE. Wypada on ciutkę lepiej od wartości dla całego zbioru.
+
 ```{r}
 trainPL_rf <- sample(1:nrow(PolandSet), 0.8 * nrow(PolandSet))  
 testPL_rf <- setdiff(1:nrow(PolandSet), trainPL_rf)
@@ -209,15 +245,31 @@ print(mse_rfPL)
 ```
 
 #### Wyniki dla zbioru wszystkich siatkarzy
+
 Teraz wyświetlimy wartości jakie model przewidziaj w porównaniu z prawdziwymi oraz policzymy jego dokładność zarówno dla zbioru pełnego jak i Polskiego.
+
 ```{r}
-predicted_rf_binary <- ifelse(pred_rf > 0.5, 1, 0)
-conf_matrix <- table(Predicted = predicted_rf_binary, Actual = dataset$Winner[test_rf])
+pred_rf_binary <- ifelse(pred_rf > 0.5, 1, 0)
+
+conf_matrix <- table(Predicted = pred_rf_binary, Actual = dataset$Winner[test_rf])
 
 print(conf_matrix)
 
 accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
 print(paste("Accuracy:", round(accuracy, 4)))
+```
+
+Wyniki dla zbioru kobiet
+
+```{r}
+pred_rf_binary_w <- ifelse(pred_rf > 0.5, 1, 0)
+
+conf_matrix_w <- table(Predicted = pred_rf_binary_w, Actual = data_woman$Winner[test_rf])
+
+print(conf_matrix_w)
+
+accuracy_w <- sum(diag(conf_matrix_w)) / sum(conf_matrix_w)
+print(paste("Accuracy:", round(accuracy_w, 4)))
 ```
 
 ```{r}
@@ -247,6 +299,8 @@ varImpPlot(rfPL)
 
 ## Badanie pozycji
 
+### KNN
+
 ```{r}
 library(class)
 ```
@@ -268,21 +322,17 @@ print(paste("Accuracy:", accuracy))
 ```
 
 ```{r}
-set.seed(123)
-rf_pos <- randomForest(Position ~ . - Match_Date -Player.Name -Player_ID -Versus -Nationality -Winner, data = dataset, subset = train_rf, importance = TRUE)
+knn_pos5 <- knn(train = train_knn, test = test_knn, cl = class_knn, k=5)
 
-pred_rf_pos <- predict(rf_pos, newdata = dataset[test_rf, ])
-conf_matrix_pos <- table(Predicted = pred_rf_pos, Actual = dataset$Position[test_rf])
+summary(knn_pos5)
 
-print(conf_matrix_pos)
+class_knn_test <- dataset$Position[-train_indices]
+t <- table(knn_pos5,class_knn_test)
 
-accuracy_pos <- sum(diag(conf_matrix_pos)) / sum(conf_matrix_pos)
-print(paste("Accuracy:", round(accuracy_pos, 4)))
+accuracy <- sum(diag(t)) / sum(t)
+print(t)
+print(paste("Accuracy:", accuracy))
 ```
-```{r}
-importance(rf_pos)
-plot(rf_pos, type = "l")
-varImpPlot(rf_pos)
 
 ```{r}
 train_knn_PL <- train_PL[, !(names(train_PL) %in% c("Versus","Match_Date","Winner","Position", "Player.Name"))]
@@ -298,4 +348,37 @@ t_PL <- table(knn_pos_PL,class_knn_test_PL)
 accuracy_PL <- sum(diag(t_PL)) / sum(t_PL)
 print(t_PL)
 print(paste("Accuracy:", accuracy_PL))
+```
+
+### Las losowy
+
+```{r}
+set.seed(123)
+rf_pos <- randomForest(Position ~ . - Match_Date -Player.Name -Player_ID -Versus -Nationality -Winner, data = dataset, subset = train_rf, importance = TRUE)
+
+pred_rf_pos <- predict(rf_pos, newdata = dataset[test_rf, ])
+conf_matrix_pos <- table(Predicted = pred_rf_pos, Actual = dataset$Position[test_rf])
+
+print(conf_matrix_pos)
+
+accuracy_pos <- sum(diag(conf_matrix_pos)) / sum(conf_matrix_pos)
+print(paste("Accuracy:", round(accuracy_pos, 4)))
+```
+
+Dla kobiet
+
+```{r}
+pred_rf_pos_w <- predict(rf_pos, newdata = dataset_woman[test_rf, ])
+conf_matrix_pos_w <- table(Predicted = pred_rf_pos_w, Actual = dataset_woman$Position[test_rf])
+
+print(conf_matrix_pos_w)
+
+accuracy_pos_w<- sum(diag(conf_matrix_pos_w)) / sum(conf_matrix_pos_w)
+print(paste("Accuracy:", round(accuracy_pos_w, 4)))
+```
+
+```{r}
+importance(rf_pos)
+plot(rf_pos, type = "l")
+varImpPlot(rf_pos)
 ```

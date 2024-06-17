@@ -1,105 +1,105 @@
 date,hour,Team A,result,Team B
-6 Jun,16:30,Italy,0–3,Argentina
-6 Jun,20:00,Canada,3–2,Cuba
-7 Jun,16:30,United States,3–0,Netherlands
-7 Jun,20:00,Brazil,3–1,Germany
-8 Jun,11:00,Netherlands,3–0,Cuba
-8 Jun,16:30,Italy,0–3,United States
-8 Jun,20:00,Argentina,2–3,Brazil
-9 Jun,11:00,Netherlands,3–0,Germany
-9 Jun,16:30,Italy,3–1,Cuba
-9 Jun,20:00,Canada,1–3,Argentina
-10 Jun,13:00,Germany,1–3,Italy
-10 Jun,16:30,Brazil,2–3,Cuba
-10 Jun,20:00,Canada,0–3,United States
-11 Jun,11:00,Argentina,3–2,Netherlands
-11 Jun,14:30,United States,1–3,Brazil
-11 Jun,18:00,Canada,1–3,Germany
-6 Jun,16:10,Bulgaria,2–3,China
-6 Jun,19:40,Japan,3–0,Iran
-7 Jun,15:00,Slovenia,3–1,Serbia
-7 Jun,18:00,Poland,3–1,France
-8 Jun,12:00,Slovenia,0–3,Bulgaria
-8 Jun,15:00,Serbia,3–0,China
-8 Jun,18:00,Poland,3–2,Iran
-9 Jun,13:10,China,1–3,France
-9 Jun,16:10,Poland,3–2,Bulgaria
-9 Jun,19:40,Japan,3–1,Serbia
-10 Jun,12:40,France,1–3,Slovenia
-10 Jun,15:40,Iran,3–1,China
-10 Jun,19:10,Japan,3–0,Bulgaria
-11 Jun,12:40,Slovenia,3–0,Iran
-11 Jun,15:40,Serbia,3–0,Poland
-11 Jun,19:10,Japan,3–1,France
-20 Jun,13:00,Iran,3–0,Germany
-20 Jun,16:30,United States,3–1,Serbia
-20 Jun,20:00,Netherlands,3–0,China
-21 Jun,13:00,Iran,0–3,Italy
-21 Jun,16:30,United States,3–0,China
-21 Jun,20:00,Germany,2–3,Poland
-22 Jun,13:00,China,0–3,Italy
-22 Jun,16:30,Serbia,3–1,Germany
-22 Jun,20:00,Netherlands,2–3,Poland
-23 Jun,16:30,Iran,0–3,United States
-23 Jun,20:00,Serbia,0–3,Italy
-24 Jun,13:00,Poland,0–3,United States
-24 Jun,17:00,Netherlands,3–2,Iran
-24 Jun,20:30,China,3–1,Germany
-25 Jun,12:30,Italy,1–3,Poland
-25 Jun,16:00,Netherlands,2–3,Serbia
-20 Jun,13:00,Japan,3–1,Canada
-20 Jun,17:00,Argentina,1–3,Slovenia
-20 Jun,20:30,Brazil,3–0,Bulgaria
-21 Jun,13:00,Japan,3–0,Cuba
-21 Jun,17:00,Slovenia,3–0,Canada
-21 Jun,20:30,Argentina,3–1,France
-22 Jun,13:00,Japan,3–2,Brazil
-22 Jun,17:00,Canada,3–1,Bulgaria
-22 Jun,20:30,Slovenia,3–1,Cuba
-23 Jun,16:30,Argentina,3–0,Bulgaria
-23 Jun,20:30,France,3–0,Cuba
-24 Jun,13:00,Japan,3–2,Argentina
-24 Jun,17:00,Brazil,3–1,Slovenia
-24 Jun,20:30,Canada,0–3,France
-25 Jun,13:00,Bulgaria,2–3,Cuba
-25 Jun,17:00,Brazil,3–1,France
-4 Jul,13:00,Argentina,3–1,Serbia
-4 Jul,16:30,Iran,0–3,France
-5 Jul,17:00,Germany,3–0,Bulgaria
-5 Jul,20:30,United States,3–0,Cuba
-6 Jul,13:30,Argentina,3–0,Germany
-6 Jul,17:00,Serbia,3–2,Cuba
-6 Jul,20:30,Bulgaria,3–2,Iran
-7 Jul,13:30,Serbia,1–3,France
-7 Jul,17:00,Cuba,0–3,Germany
-7 Jul,20:30,United States,2–3,Argentina
-8 Jul,13:30,Bulgaria,0–3,Serbia
-8 Jul,17:00,Argentina,3–2,Iran
-8 Jul,20:30,United States,3–0,France
-9 Jul,13:30,Cuba,3–2,Iran
-9 Jul,17:00,France,3–1,Germany
-9 Jul,20:30,United States,3–0,Bulgaria
-4 Jul,15:00,Brazil,1–3,Italy
-4 Jul,19:00,Japan,3–2,China
-5 Jul,15:00,Canada,1–3,Netherlands
-5 Jul,19:00,Poland,3–2,Slovenia
-6 Jul,11:00,Brazil,3–0,Netherlands
-6 Jul,15:00,Canada,2–3,Italy
-6 Jul,19:00,China,1–3,Slovenia
-7 Jul,11:00,Poland,3–1,Brazil
-7 Jul,15:00,Slovenia,0–3,Italy
-7 Jul,19:00,Japan,3–1,Netherlands
-8 Jul,11:00,Brazil,3–0,China
-8 Jul,15:00,Poland,3–0,Canada
-8 Jul,19:00,Japan,1–3,Italy
-9 Jul,11:00,China,1–3,Canada
-9 Jul,15:00,Slovenia,3–0,Netherlands
-9 Jul,19:00,Japan,0–3,Poland
-19 Jul,17:00,United States,3–2,France
-19 Jul,20:00,Italy,3–0,Argentina
-20 Jul,17:00,Japan,3–0,Slovenia
-20 Jul,20:00,Poland,3–0,Brazil
-22 Jul,17:00,Japan,1–3,Poland
-22 Jul,20:00,United States,3–0,Italy
-23 Jul,17:00,Japan,3–2,Italy
-23 Jul,20:00,Poland,3–1,United States
+30 May,17:00,Italy,3–2,Thailand
+30 May,20:15,Poland,3–2,Canada
+31 May,17:00,Serbia,2–3,United States
+31 May,20:00,South Korea,0–3,Turkey
+1 Jun,14:00,Canada,0–3,Thailand
+1 Jun,17:00,Poland,3–1,Italy
+1 Jun,20:00,Turkey,3–1,Serbia
+2 Jun,14:00,Thailand,0–3,Poland
+2 Jun,17:00,Canada,3–0,South Korea
+2 Jun,20:00,United States,3–2,Italy
+3 Jun,14:00,Poland,3–0,Serbia
+3 Jun,17:00,United States,3–0,South Korea
+3 Jun,20:00,Turkey,3–0,Italy
+4 Jun,14:00,Thailand,3–0,South Korea
+4 Jun,17:00,Canada,3–2,Serbia
+4 Jun,20:00,United States,3–2,Turkey
+30 May,16:10,Germany,3–1,Netherlands
+30 May,19:40,Japan,3–1,Dominican Republic
+31 May,15:00,Croatia,0–3,Bulgaria
+31 May,18:00,China,3–2,Brazil
+1 Jun,12:00,Croatia,0–3,Germany
+1 Jun,15:00,Bulgaria,2–3,Dominican Republic
+1 Jun,18:00,Brazil,3–0,Netherlands
+2 Jun,13:10,China,3–0,Germany
+2 Jun,16:10,Dominican Republic,3–2,Netherlands
+2 Jun,19:40,Croatia,0–3,Japan
+3 Jun,12:40,Brazil,3–1,Dominican Republic
+3 Jun,15:40,China,3–1,Netherlands
+3 Jun,19:10,Bulgaria,0–3,Japan
+4 Jun,12:40,Croatia,0–3,Brazil
+4 Jun,15:40,Germany,3–2,Bulgaria
+4 Jun,19:10,Japan,0–3,China
+13 Jun,17:00,Dominican Republic,1–3,Poland
+13 Jun,20:30,China,3–0,Canada
+14 Jun,17:00,Italy,3–0,Bulgaria
+14 Jun,20:30,Netherlands,0–3,Turkey
+15 Jun,13:30,Bulgaria,0–3,Canada
+15 Jun,17:00,Poland,3–0,Turkey
+15 Jun,20:30,Dominican Republic,2–3,Italy
+16 Jun,13:30,Turkey,3–0,Canada
+16 Jun,17:00,Poland,0–3,Netherlands
+16 Jun,20:30,Bulgaria,1–3,China
+17 Jun,13:30,Dominican Republic,3–2,Canada
+17 Jun,17:00,Netherlands,2–3,Italy
+17 Jun,20:30,Poland,3–0,China
+18 Jun,13:30,Bulgaria,0–3,Netherlands
+18 Jun,17:00,Dominican Republic,1–3,Turkey
+18 Jun,20:30,Italy,3–2,China
+13 Jun,17:30,Croatia,1–3,United States
+13 Jun,21:00,Japan,2–3,Serbia
+14 Jun,17:30,Germany,3–1,Thailand
+14 Jun,21:00,Brazil,3–0,South Korea
+15 Jun,14:00,Thailand,0–3,United States
+15 Jun,17:30,Japan,3–0,South Korea
+15 Jun,21:00,Brazil,3–2,Serbia
+16 Jun,14:00,Japan,2–3,Germany
+16 Jun,17:30,South Korea,0–3,Croatia
+16 Jun,21:00,Serbia,3–2,Thailand
+17 Jun,14:00,Brazil,3–1,Germany
+17 Jun,17:30,Japan,3–2,United States
+17 Jun,21:00,Serbia,3–1,Croatia
+18 Jun,10:00,Brazil,0–3,United States
+18 Jun,14:00,Thailand,0–3,Croatia
+18 Jun,17:30,Germany,3–1,South Korea
+27 Jun,15:30,Germany,3–1,Dominican Republic
+27 Jun,19:00,Bulgaria,3–1,South Korea
+28 Jun,15:30,United States,3–2,Poland
+28 Jun,19:00,China,1–3,Serbia
+29 Jun,12:00,Poland,3–2,Germany
+29 Jun,15:30,United States,3–0,Bulgaria
+29 Jun,19:30,Dominican Republic,3–0,South Korea
+30 Jun,12:00,Bulgaria,1–3,Poland
+30 Jun,15:30,Germany,1–3,Serbia
+30 Jun,19:00,China,2–3,Dominican Republic
+1 Jul,10:30,Serbia,2–3,Dominican Republic
+1 Jul,14:00,South Korea,1–3,China
+1 Jul,17:30,Germany,1–3,United States
+2 Jul,10:30,Serbia,3–2,Bulgaria
+2 Jul,14:00,Poland,3–0,South Korea
+2 Jul,17:30,China,3–2,United States
+27 Jun,17:00,Croatia,0–3,Canada
+27 Jun,20:30,Thailand,0–3,Netherlands
+28 Jun,17:00,Japan,3–2,Turkey
+28 Jun,20:30,Brazil,3–2,Italy
+29 Jun,13:00,Croatia,0–3,Netherlands
+29 Jun,17:00,Brazil,2–3,Canada
+29 Jun,20:30,Thailand,0–3,Turkey
+30 Jun,13:00,Canada,2–3,Italy
+30 Jun,17:00,Netherlands,3–1,Japan
+30 Jun,20:30,Brazil,0–3,Turkey
+1 Jul,13:00,Italy,3–0,Croatia
+1 Jul,17:00,Netherlands,2–3,Canada
+1 Jul,20:30,Thailand,0–3,Japan
+2 Jul,13:00,Croatia,0–3,Turkey
+2 Jul,17:00,Italy,3–1,Japan
+2 Jul,20:30,Thailand,0–3,Brazil
+12 Jul,16:00,Poland,3–1,Germany
+12 Jul,19:30,United States,3–1,Japan
+13 Jul,10:30,Brazil,1–3,China
+13 Jul,14:00,Turkey,3–0,Italy
+15 Jul,16:00,Poland,0–3,China
+15 Jul,19:30,United States,1–3,Turkey
+16 Jul,14:00,Poland,3–2,United States
+16 Jul,17:30,China,1–3,Turkey

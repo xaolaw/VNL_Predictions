@@ -28,11 +28,11 @@ data = pd.concat([results_21, results_22, results_23])
 data = data.rename(columns={'Team A': 'TeamA','Team B': 'TeamB','full_date':'Match_Date',})
 data = data.replace({'TeamA': {'United States': 'USA'}, 'TeamB': {'United States': 'USA'}})
 
-player_data = pd.read_csv('df_mens_indv_21_23.csv')
+player_data = pd.read_csv('df_womens_indv_21_23.csv')
 player_data['Match_Date'] = pd.to_datetime(player_data['Match_Date'],format='%d/%m/%Y', errors='coerce')
 merged_data = pd.merge(data, player_data, on=['TeamA', 'TeamB', 'Match_Date'], how='inner')
 
-player_info_data = pd.read_csv('df_mens_rosters_21_23.csv')
+player_info_data = pd.read_csv('df_womens_rosters_21_23.csv')
 player_info_data = player_info_data[['Player_ID', 'Player Name', 'Position', 'Nationality', 'Age','Height','Year']]
 merged_data = pd.merge(player_info_data,merged_data,on=['Player_ID','Year'], how='inner')
 
@@ -43,5 +43,5 @@ merged_data.drop(['TeamA', 'TeamB'], axis=1, inplace=True)
 cols = merged_data.columns.tolist()
 cols.insert(cols.index('Year') + 1, cols.pop(cols.index('Versus')))
 merged_data = merged_data[cols]
-merged_data.to_csv('../vnl_dataset.csv', index=False)
+merged_data.to_csv('../vnl_dataset_woman.csv', index=False)
 
